@@ -1,0 +1,22 @@
+\subsection{Simple example}
+
+% subsections
+\input{patterns/09_loops/simple/x86}
+\input{patterns/09_loops/simple/ARM/main}
+\input{patterns/09_loops/simple/MIPS}
+
+\subsubsection{One more thing}
+
+Nel codice generato notiamo che dopo l'inizializzazione della variabile $i$ il corpo del loop non viene eseguito subito, ma
+viene prima verificata la condizione per $i$ e solo dopo il loop è eseguito. 
+
+Se la condizione non è soddisfatta all'inizio, il corpo del loop viene saltato.
+Ciò è possibile nel seguente caso:
+
+\lstinputlisting[style=customc]{patterns/09_loops/simple/loops_3_EN.c}
+
+Se \IT{total\_entries\_to\_process} è 0, il corpo del loop non deve essere eseguito. Per questo motivo la condizione viene
+controllata prima dell'esecuzione.
+
+Un compilatore ottimizzante potrebbe comunque sostituire il controllo della condizione e il corpo del loop, se fosse sicuro dell'impossibilità 
+della situazione qui descritta (come nel caso del nostro semplice esempio e i compilatori come Keil, Xcode (LLVM), MSVC in modalità ottimizzante).
