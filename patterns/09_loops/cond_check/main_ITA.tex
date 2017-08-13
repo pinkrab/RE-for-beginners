@@ -1,0 +1,24 @@
+\subsection{Controllo della condizione}
+
+E' importante tenere a mente che nel costrutto \IT{for()} la condizione non viene controllata alla fine, bensì all'inizio del ciclo,
+prima dell'esecuzione del corpo.
+Spesso però per il compilatore risulta più conveniente controllarla alla fine, dopo il corpo del loop.
+A volte possono essere inseriti all'inizio anche altri controlli aggiuntivi.
+
+Per esempio:
+
+\lstinputlisting[style=customc]{patterns/09_loops/cond_check/1.c}
+
+Optimizing GCC 5.4.0 x64:
+
+\lstinputlisting[style=customasmx86]{patterns/09_loops/cond_check/1.s}
+
+We see two checks.
+
+\myindex{Hex-Rays}
+Hex-Rays (versione 2.2.0) lo decompila così:
+
+\lstinputlisting[style=customc]{patterns/09_loops/cond_check/hexrays.c}
+
+In questo caso \IT{do/while()} può essere senza dubbio sostituito con \IT{for()}, e il primo controllo può essere rimosso.
+
