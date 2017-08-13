@@ -1,0 +1,61 @@
+\clearpage
+\myparagraph{\Optimizing MSVC + \olly}
+\myindex{\olly}
+
+Proviamo questo esempio (ottimizzato) in \olly. Questa è la prima iterazione:
+
+\begin{figure}[H]
+\centering
+\myincludegraphics{patterns/10_strings/1_strlen/olly1.png}
+\caption{\olly: inizio della prima iterazione}
+\label{fig:strlen_olly_1}
+\end{figure}
+
+Vediamo che \olly ha trovato un loop e, per nostra comodità, lo ha racchiuso tra parentesi.
+Facendo click di destra su \EAX e selezionando \q{Follow in Dump} la finestra della memoria si posizionerà in modo tale da osservare la memoria all'indirizzo contenuto in \EAX.
+Vediamo infatti la stringa \q{hello!} in memoria. C'è almeno un byte zero dopo di essa, e poi robaccia casuale.
+Se \olly vede un registro contenente un indirizzo valido che punta ad una stringa, visualizza la stringa stessa.
+
+\clearpage
+Premiamo F8 (\stepover) un po' di volte per arrivare all'inizio del corpo del ciclo:
+
+\begin{figure}[H]
+\centering
+\myincludegraphics{patterns/10_strings/1_strlen/olly2.png}
+\caption{\olly: inizio della seconda iterazione}
+\label{fig:strlen_olly_2}
+\end{figure}
+
+Vediamo che \EAX contiene l'indirizzo del secondo carattere della stringa.
+
+\clearpage
+
+
+Dobbiamo premere F8 diverse volte per uscire dal ciclo:
+
+\begin{figure}[H]
+\centering
+\myincludegraphics{patterns/10_strings/1_strlen/olly3.png}
+\caption{\olly: sta per essere calcolata la differenza tra i puntatori}
+\label{fig:strlen_olly_3}
+\end{figure}
+
+Notiamo che \EAX adesso contiene l'indirizzo del byte zero che si trova subito dopo la stringa.
+Nel frattempo \EDX non è cambiato, e quindi punta ancora all'inizio della stringa.
+
+La differenza tra questi due indirizzi sta per essere calcolata.
+
+\clearpage
+L'istruzione \SUB è appena stata eseguita:
+
+\begin{figure}[H]
+\centering
+\myincludegraphics{patterns/10_strings/1_strlen/olly4.png}
+\caption{\olly: \EAX sta per essere decrementato}
+\label{fig:strlen_olly_4}
+\end{figure}
+
+La differenza tra i puntatori si trova ora nel registro \EAX---7.
+Di fatto la lunghezza della stringa \q{hello!} è 6, ma includendo il terminatore (zero byte) è 7.
+\TT{strlen()} deve restituire il numero di caratteri nella stringa escluso il terminatore, pertanto viene sottratto uno prima della fine
+della funzione.
