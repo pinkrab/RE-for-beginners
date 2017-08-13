@@ -1,0 +1,52 @@
+\subsubsection{ARM}
+
+\myparagraph{\NonOptimizingKeilVI (\ARMMode)}
+
+\lstinputlisting[label=Keil_number_sign,style=customasmARM]{patterns/09_loops/simple/ARM/Keil_ARM_O0.asm}
+
+Il contatore di interazione $i$ viene memorizzato nel registro \Reg{4}.
+L'istruzione \INS{MOV R4, \#2} inizializza $i$.
+Le istruzioni \INS{MOV R0, R4} e \INS{BL printing\_function} rappresentano il corpo del ciclo, in cui la prima istruzione prepara
+l'argomento per la funzione \ttf function e la seconda chiama la funzione.
+\myindex{ARM!\Instructions!ADD}
+L'istruzione  \INS{ADD R4, R4, \#1} aggiunge semplicemente 1 alla variabile $i$ ad ogni iterazione.
+\myindex{ARM!\Instructions!CMP}
+\myindex{ARM!\Instructions!BLT}
+\INS{CMP R4, \#0xA} confronta $i$ con \TT{0xA} (10). 
+L'istruzione successiva \INS{BLT} (\IT{Branch Less Than}) salta se $i$ è minotre di 10.
+Altrimenti viene scritto 0 nel registro \Reg{0} (poiché la nostra funzione restituisce 0) e l'esecuzione delle funzione termina.
+
+\myparagraph{\OptimizingKeilVI (\ThumbMode)}
+
+\lstinputlisting[style=customasmARM]{patterns/09_loops/simple/ARM/Keil_thumb_O3.asm}
+
+Praticamente uguale al precedente.
+
+\myparagraph{\OptimizingXcodeIV (\ThumbTwoMode)}
+\label{ARM_unrolled_loops}
+
+\lstinputlisting[style=customasmARM]{patterns/09_loops/simple/ARM/xcode_thumb_O3.asm}
+
+Questa era la mia funzione \ttf :
+
+\begin{lstlisting}[style=customc]
+void printing_function(int i)
+{
+    printf ("%d\n", i);
+};
+\end{lstlisting}
+
+\myindex{Unrolled loop}
+\myindex{Inline code}
+LLVM non solo ha srotolato il loop ma ha anche "messo in linea" (\IT{inlined}) la funzione \ttf e inserito il suo corpo 8 volte
+anziché chiamarla.
+
+Ciò puà avvenire quando la funzione è molto semplice (come la mia) e quando non viene chiamata molto spesso (come in questo caso).
+
+\myparagraph{ARM64: \Optimizing GCC 4.9.1}
+
+\lstinputlisting[caption=\Optimizing GCC 4.9.1,style=customasmARM]{patterns/09_loops/simple/ARM/ARM64_GCC491_O3_EN.s}
+
+\myparagraph{ARM64: \NonOptimizing GCC 4.9.1}
+
+\lstinputlisting[caption=\NonOptimizing GCC 4.9.1 -fno-inline,style=customasmARM]{patterns/09_loops/simple/ARM/ARM64_GCC491_O3_EN.s}
